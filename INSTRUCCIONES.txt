@@ -1,0 +1,52 @@
+DAILYBUDGET — GUIA RAPIDA
+
+Gracias por tu compra.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+¿TIENES UNA URL DE LA APP?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Si quien te vendio esto te dio un enlace directo,
+abrelo en tu celular e instalala desde ahi.
+No necesitas tocar ningun archivo.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INSTALAR EN ANDROID
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Abre la URL en Google Chrome.
+2. Toca el menu de 3 puntos.
+3. Elige "Instalar app" o "Añadir a pantalla de inicio".
+4. Confirma. La app queda en tu pantalla de inicio.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INSTALAR EN IPHONE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Abre la URL en Safari (no en Chrome).
+2. Toca el boton Compartir (cuadrado con flecha).
+3. Elige "Añadir a pantalla de inicio".
+4. Toca "Añadir".
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COMO EMPEZAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Abre la app.
+2. Escribe tu saldo total disponible.
+3. Escribe cuantos dias durara tu periodo.
+4. Toca "Comenzar Plan".
+
+La app calcula tu limite diario automaticamente.
+Dentro de la app tienes una seccion "Guia" con instalacion,
+uso, exportacion e importacion de datos.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESPALDO DE DATOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Usa "Exportar" en la app para guardar un archivo .json.
+- Para restaurar, usa "Importar datos desde archivo".
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PARA QUIEN REVENDE ESTA APP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Lo ideal es publicar la app una sola vez en una URL fija.
+Asi el comprador solo necesita un enlace — no toca archivos.
+
+- Ricardo
