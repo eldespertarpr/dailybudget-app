@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DailyBudget</title>
+    <!-- DailyBudget v5.8 candidata-publicacion -->
+    <!-- DailyBudget v5.7 historial-protegido -->
+    <!-- DailyBudget v5.2 pulida-metas-pagos -->
+    <!-- DailyBudget v5.1 metas-pagos-reservados-segura -->
+    <!-- DailyBudget v4.2 pulida-final -->
     <!-- PWA: manifest e íconos para instalación en pantalla de inicio -->
     <meta name="description" content="DailyBudget: presupuesto diario offline, sin cuenta y sin suscripción.">
     <link rel="manifest" href="manifest.json">
@@ -40,6 +45,40 @@
         }
 
         .hidden-section { display: none; }
+
+
+        /* V4: sistema visual premium */
+        .app-card {
+            background: rgba(255,255,255,0.96);
+            border: 1px solid rgba(226,232,240,0.9);
+            border-radius: 28px;
+            box-shadow: 0 18px 45px rgba(15,23,42,0.06);
+        }
+
+        .soft-panel {
+            background: #f8fafc;
+            border: 1px solid #eef2f7;
+            border-radius: 22px;
+        }
+
+        .metric-pill {
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 18px;
+            padding: 12px;
+        }
+
+        .mode-chip {
+            background: #f8fafc;
+            border: 1px solid #eef2f7;
+            border-radius: 18px;
+            padding: 12px 10px;
+        }
+
+
+        .metric-pill p {
+            line-height: 1.15;
+        }
 
         /* Estado negativo en la tarjeta principal */
         #status-card.is-negative { background-color: #dc2626; } /* red-600 */
@@ -106,38 +145,40 @@
             <!-- Key Stats Card -->
             <!-- FIX #5: Cuando daysLeft === 0, render() muestra una tarjeta de periodo completado
                  en lugar de este card. Este card solo aparece cuando daysLeft > 0. -->
-            <div id="status-card" class="bg-indigo-600 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden transition-colors">
-                <div class="relative z-10 space-y-4">
+            <div id="status-card" class="bg-indigo-600 rounded-[2rem] p-6 text-white shadow-xl relative overflow-hidden transition-colors">
+                <div class="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-white/10"></div>
+                <div class="absolute -bottom-20 -left-20 w-48 h-48 rounded-full bg-indigo-400/20"></div>
+
+                <div class="relative z-10 space-y-5">
                     <!-- Nombre del periodo y fecha de inicio -->
-                    <div id="display-period-meta" class="flex justify-between items-center pb-1 border-b border-white/10">
-                        <span id="display-period-name" class="text-xs font-bold text-indigo-200 uppercase tracking-wider"></span>
-                        <span id="display-period-date" class="text-[10px] text-indigo-300"></span>
-                    </div>
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-indigo-100 text-xs font-bold uppercase tracking-wider mb-1">Presupuesto de hoy</p>
-                            <div id="display-daily-budget" class="text-2xl font-extrabold tracking-tight">$0.00</div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-indigo-100 text-xs font-bold uppercase tracking-wider mb-1">Disponible Hoy</p>
-                            <div id="display-daily-available" class="text-2xl font-extrabold tracking-tight">$0.00</div>
-                        </div>
+                    <div id="display-period-meta" class="flex justify-between items-center pb-2 border-b border-white/10">
+                        <span id="display-period-name" class="text-xs font-bold text-indigo-100 uppercase tracking-wider"></span>
+                        <span id="display-period-date" class="text-[10px] text-indigo-200"></span>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 border-t border-white/20 pt-4">
-                        <div>
-                            <p class="text-indigo-200 text-[10px] uppercase font-bold mb-1">Gastado Hoy</p>
-                            <div id="display-daily-spent" class="text-lg font-bold">$0.00</div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-indigo-200 text-[10px] uppercase font-bold mb-1">Días Restantes</p>
-                            <div id="display-days-left" class="text-lg font-bold">0</div>
-                        </div>
+                    <div class="text-center py-1">
+                        <p class="text-indigo-100 text-xs font-bold uppercase tracking-[0.22em] mb-2">Disponible hoy</p>
+                        <div id="display-daily-available" class="text-5xl font-extrabold tracking-tight leading-none">$0.00</div>
+                        <p class="text-indigo-200 text-[11px] mt-3">Tu número principal antes de gastar.</p>
                     </div>
 
-                    <div class="pt-2 text-center">
-                        <p class="text-indigo-200 text-[10px] uppercase font-bold mb-1 tracking-widest">Balance Total Restante</p>
-                        <div id="display-total-remaining" class="text-xl font-bold text-center">$0.00</div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="metric-pill">
+                            <p class="text-indigo-200 text-[10px] uppercase font-bold mb-1 tracking-wide">Presupuesto base</p>
+                            <div id="display-daily-budget" class="text-lg font-extrabold">$0.00</div>
+                        </div>
+                        <div class="metric-pill text-right">
+                            <p class="text-indigo-200 text-[10px] uppercase font-bold mb-1 tracking-wide">Gastado hoy</p>
+                            <div id="display-daily-spent" class="text-lg font-extrabold">$0.00</div>
+                        </div>
+                        <div class="metric-pill">
+                            <p class="text-indigo-200 text-[9px] uppercase font-bold mb-1 leading-tight tracking-wide">Balance<br>restante</p>
+                            <div id="display-total-remaining" class="text-lg font-extrabold">$0.00</div>
+                        </div>
+                        <div class="metric-pill text-right">
+                            <p class="text-indigo-200 text-[10px] uppercase font-bold mb-1 tracking-wide">Días restantes</p>
+                            <div id="display-days-left" class="text-lg font-extrabold">0</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -159,11 +200,130 @@
                 </div>
             </div>
 
+            <!-- Daily Control / Safe Spend -->
+            <div id="safe-spend-card" class="app-card p-5 space-y-5">
+                <div class="flex items-start gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5 2a8 8 0 11-16 0 8 8 0 0116 0z" />
+                        </svg>
+                    </div>
+                    <div class="space-y-1 min-w-0">
+                        <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Control diario</h3>
+                        <p class="text-xs text-slate-400">Elige cómo gastar hoy sin dañar el periodo.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="mode-chip">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Estricto</p>
+                        <p id="display-mode-strict" class="text-sm font-extrabold text-slate-800">$0.00</p>
+                    </div>
+                    <div class="mode-chip bg-indigo-50 border-indigo-100">
+                        <p class="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Normal</p>
+                        <p id="display-mode-normal" class="text-sm font-extrabold text-indigo-700">$0.00</p>
+                    </div>
+                    <div class="mode-chip">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Flexible</p>
+                        <p id="display-mode-flexible" class="text-sm font-extrabold text-slate-800">$0.00</p>
+                    </div>
+                </div>
+
+                <div class="soft-panel p-4 space-y-3">
+                    <div>
+                        <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">¿Puedo gastar esto?</h4>
+                        <p class="text-[11px] text-slate-400">Prueba antes de pagar.</p>
+                    </div>
+
+                    <div class="flex gap-2 w-full items-center">
+                        <input
+                            type="number"
+                            id="safe-spend-amount"
+                            step="0.01"
+                            inputmode="decimal"
+                            class="flex-grow min-w-0 bg-white border border-slate-100 p-3 rounded-2xl outline-none text-sm font-bold shadow-sm"
+                            placeholder="$0.00"
+                        >
+                        <button
+                            id="btn-safe-spend-check"
+                            type="button"
+                            class="action-button bg-indigo-600 text-white px-4 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-md text-xs font-bold uppercase"
+                        >
+                            Verificar
+                        </button>
+                    </div>
+
+                    <div id="safe-spend-result" class="hidden rounded-2xl p-4 text-sm"></div>
+                </div>
+            </div>
+
+            <!-- Protected Plan: metas y pagos reservados -->
+            <div id="protected-plan-card" class="app-card p-5 space-y-5">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-start gap-3 min-w-0">
+                        <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 10v-1m8-4a8 8 0 11-16 0 8 8 0 0116 0z" />
+                            </svg>
+                        </div>
+                        <div class="space-y-1 min-w-0">
+                            <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider">Plan protegido</h3>
+                            <p class="text-xs text-slate-400">Separa pagos y metas antes de calcular tu gasto diario.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="mode-chip">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Pagos</p>
+                        <p id="protected-payments-total" class="text-sm font-extrabold text-slate-800">$0.00</p>
+                    </div>
+                    <div class="mode-chip">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Metas</p>
+                        <p id="protected-goals-total" class="text-sm font-extrabold text-slate-800">$0.00</p>
+                    </div>
+                    <div class="mode-chip bg-emerald-50 border-emerald-100">
+                        <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">Libre del periodo</p>
+                        <p id="protected-free-total" class="text-sm font-extrabold text-emerald-700">$0.00</p>
+                    </div>
+                </div>
+
+                <div id="protected-warning" class="hidden rounded-2xl p-3 text-xs bg-red-50 text-red-700 border border-red-100"></div>
+
+                                <p class="text-[11px] text-slate-400 px-1 -mt-1">Libre del periodo = balance restante menos pagos y metas pendientes.</p>
+<div class="flex gap-2">
+                    <button id="btn-add-payment" type="button" class="action-button flex-1 py-3 rounded-2xl bg-slate-900 text-white text-xs font-extrabold uppercase shadow-sm">+ Pago</button>
+                    <button id="btn-add-goal" type="button" class="action-button flex-1 py-3 rounded-2xl bg-indigo-50 text-indigo-700 text-xs font-extrabold uppercase border border-indigo-100">+ Meta</button>
+                </div>
+
+                <details id="protected-details" class="group">
+                    <summary class="list-none cursor-pointer select-none">
+                        <div class="flex items-center justify-between px-1">
+                            <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Detalles protegidos</span>
+                            <span class="text-xs font-bold text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full group-open:hidden">Ver</span>
+                            <span class="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full hidden group-open:inline">Ocultar</span>
+                        </div>
+                    </summary>
+                    <div id="protected-list" class="space-y-2 mt-3"></div>
+
+                    <div class="pt-3 mt-3 border-t border-slate-100 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Historial protegido</h4>
+                            <span id="protected-history-count" class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-full">0</span>
+                        </div>
+                        <div id="protected-history-list" class="space-y-2">
+                            <div class="text-center text-xs italic text-slate-400 py-3">Aún no hay pagos ni metas completadas</div>
+                        </div>
+                    </div>
+
+                </details>
+            </div>
+
             <!-- Summary Breakdown -->
             <!-- FIX #7: Renombrado de "Resumen Semanal" a "Resumen del Periodo"
                  El filtro ahora usa dayIndex en lugar de timestamp para no depender
                  de fechas reales del calendario, que no corresponden a los "días" de la app. -->
-            <div id="weekly-summary-area" class="bg-white rounded-3xl p-5 shadow-sm space-y-4">
+            <div id="weekly-summary-area" class="app-card p-5 space-y-4">
                 <div class="flex justify-between items-center px-1">
                     <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Resumen del Periodo</h3>
                     <div id="weekly-total" class="text-sm font-extrabold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">$0.00</div>
@@ -172,7 +332,7 @@
             </div>
 
             <!-- Expense Registration Area -->
-            <div id="input-area" class="bg-white rounded-3xl p-6 shadow-sm space-y-4">
+            <div id="input-area" class="app-card p-6 space-y-4">
                 <div class="flex justify-between items-center">
                     <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Registrar Gasto</h3>
                     <button onclick="openAdjustmentModal()" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg uppercase">
@@ -217,10 +377,17 @@
             </div>
 
             <!-- Historial -->
+            
             <div id="history-section" class="space-y-3 pb-8">
-                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider ml-2">Historial Detallado</h3>
-                <div id="history-list" class="space-y-2"></div>
+                <div class="flex items-center justify-between px-2">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider ml-2">Historial Detallado</h3>
+                    <button id="history-toggle-btn" type="button" class="action-button text-xs font-bold text-indigo-500 bg-indigo-50 px-4 py-2 rounded-full">Ver</button>
+                </div>
+                <div id="history-wrapper" class="hidden-section">
+                    <div id="history-list" class="space-y-2"></div>
+                </div>
             </div>
+
 
         </section>
     </main>
@@ -265,6 +432,27 @@
             <div class="flex gap-2">
                 <button onclick="closeAdjustmentModal()" class="flex-1 py-3 font-bold text-slate-500 text-sm">Cancelar</button>
                 <button onclick="saveAdjustment()" class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm shadow-md">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Plan Protegido -->
+    <div id="protected-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-6 hidden">
+        <div class="bg-white w-full max-w-xs rounded-3xl p-6 space-y-4 shadow-2xl">
+            <div>
+                <h3 id="protected-modal-title" class="font-bold text-lg text-slate-800">Añadir</h3>
+                <p id="protected-modal-help" class="text-xs text-slate-400 mt-1">Esto se reserva antes de calcular tu gasto diario.</p>
+            </div>
+            <input type="hidden" id="protected-type" value="payment">
+            <div class="space-y-3">
+                <input type="text" id="protected-name" class="w-full bg-slate-50 p-3 rounded-xl border border-slate-200 text-sm" placeholder="Nombre">
+                <input type="number" id="protected-amount" step="0.01" inputmode="decimal" class="w-full bg-slate-50 p-3 rounded-xl border border-slate-200 font-bold" placeholder="0.00">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider px-1">Fecha límite / vence</label>
+                <input type="date" id="protected-date" class="w-full bg-slate-50 p-3 rounded-xl border border-slate-200 text-sm text-slate-600">
+            </div>
+            <div class="flex gap-2">
+                <button id="protected-cancel" type="button" class="flex-1 py-3 font-bold text-slate-500 text-sm">Cancelar</button>
+                <button id="protected-save" type="button" class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm shadow-md">Guardar</button>
             </div>
         </div>
     </div>
@@ -372,10 +560,14 @@
             totalBalance: 0,
             daysLeft: 0,
             dailyBudget: 0,
-            expenses: []
+            expenses: [],
+            reservedPayments: [],
+            goals: [],
+            protectedHistory: []
         };
 
         const STORAGE_KEY = 'daily_budget_pro_v5';
+        let isHistoryVisible = false;
         const toCents = (val) => Math.round(parseFloat(val || 0) * 100);
         const formatCurrency = (cents) => `$${(cents / 100).toFixed(2)}`;
 
@@ -393,7 +585,9 @@
                 totalBalance: 0,
                 daysLeft: 0,
                 dailyBudget: 0,
-                expenses: []
+                expenses: [],
+                reservedPayments: [],
+                goals: []
             };
             localStorage.removeItem(STORAGE_KEY);
             
@@ -403,6 +597,8 @@
             document.getElementById('init-total-days').value = '';
             document.getElementById('expense-name').value = '';
             document.getElementById('expense-amount').value = '';
+            const protectedModal = document.getElementById('protected-modal');
+            if (protectedModal) protectedModal.classList.add('hidden');
             
             render();
             showToast('Aplicación reiniciada');
@@ -420,6 +616,8 @@
             state.totalBalance = balCents;
             state.initialDays = days;
             state.daysLeft = days;
+            state.reservedPayments = [];
+            state.goals = [];
             state.dailyBudget = Math.round(balCents / days);
             state.periodName = nameInput || 'Periodo';
             state.startDate = new Date().toLocaleDateString('es-PR', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -509,6 +707,388 @@
             closeAdjustmentModal(); save(); render();
         }
 
+
+
+        function normalizeState() {
+            if (!Array.isArray(state.expenses)) state.expenses = [];
+            if (!Array.isArray(state.reservedPayments)) state.reservedPayments = [];
+            if (!Array.isArray(state.goals)) state.goals = [];
+            if (!Array.isArray(state.protectedHistory)) state.protectedHistory = [];
+        }
+
+        function getPendingPayments() {
+            normalizeState();
+            return state.reservedPayments.filter(p => !p.paid);
+        }
+
+        function getPendingGoals() {
+            normalizeState();
+            return state.goals.filter(g => !g.completed);
+        }
+
+        function getPendingPaymentsTotal() {
+            return getPendingPayments().reduce((acc, p) => acc + (p.amount || 0), 0);
+        }
+
+        function getPendingGoalsTotal() {
+            return getPendingGoals().reduce((acc, g) => acc + (g.amount || 0), 0);
+        }
+
+        function getReservedTotal() {
+            return getPendingPaymentsTotal() + getPendingGoalsTotal();
+        }
+
+        function getProtectedBalanceRaw() {
+            return state.totalBalance - getReservedTotal();
+        }
+
+        function getProtectedBalance() {
+            return Math.max(getProtectedBalanceRaw(), 0);
+        }
+
+        function calculateProtectedDailyBudget() {
+            if (!state.isInitialized || state.daysLeft <= 0) return 0;
+            return Math.round(getProtectedBalance() / state.daysLeft);
+        }
+
+        function recalcDailyBudgetForProtectedPlan() {
+            if (!state.isInitialized || state.daysLeft <= 0) return;
+            state.dailyBudget = calculateProtectedDailyBudget();
+        }
+
+        function formatDateShort(dateStr) {
+            if (!dateStr) return '';
+            try {
+                const d = new Date(`${dateStr}T00:00:00`);
+                return d.toLocaleDateString('es-PR', { day: 'numeric', month: 'short' });
+            } catch (e) {
+                return dateStr;
+            }
+        }
+
+        function openProtectedModal(type) {
+            document.getElementById('protected-type').value = type;
+            document.getElementById('protected-name').value = '';
+            document.getElementById('protected-amount').value = '';
+            document.getElementById('protected-date').value = '';
+            const isPayment = type === 'payment';
+            document.getElementById('protected-modal-title').textContent = isPayment ? 'Añadir pago reservado' : 'Añadir meta';
+            document.getElementById('protected-modal-help').textContent = isPayment
+                ? 'Reserva dinero para un pago que viene antes de gastar de más.'
+                : 'Reserva dinero para una meta antes de calcular tu gasto diario.';
+            document.getElementById('protected-name').placeholder = isPayment ? 'Ej. Luz, carro, tarjeta' : 'Ej. Emergencia, viaje, ahorro';
+            document.getElementById('protected-modal').classList.remove('hidden');
+        }
+
+        function closeProtectedModal() {
+            document.getElementById('protected-modal').classList.add('hidden');
+        }
+
+        function saveProtectedItem() {
+            normalizeState();
+            const type = document.getElementById('protected-type').value;
+            const name = document.getElementById('protected-name').value.trim();
+            const amount = toCents(document.getElementById('protected-amount').value);
+            const dueDate = document.getElementById('protected-date').value;
+
+            if (amount <= 0 || isNaN(amount)) return showToast('Monto inválido');
+
+            if (type === 'payment') {
+                state.reservedPayments.unshift({
+                    id: Date.now(),
+                    name: name || 'Pago reservado',
+                    amount,
+                    dueDate,
+                    createdAt: new Date().toISOString(),
+                    paid: false,
+                    paidAt: null
+                });
+            } else {
+                state.goals.unshift({
+                    id: Date.now(),
+                    name: name || 'Meta',
+                    amount,
+                    dueDate,
+                    createdAt: new Date().toISOString(),
+                    completed: false,
+                    completedAt: null
+                });
+            }
+
+            recalcDailyBudgetForProtectedPlan();
+            closeProtectedModal();
+            save();
+            render();
+            showToast(type === 'payment' ? 'Pago reservado añadido' : 'Meta añadida');
+        }
+
+        function deleteProtectedItem(type, id) {
+            normalizeState();
+            if (type === 'payment') {
+                const item = state.reservedPayments.find(p => p.id === id);
+                if (!item || item.paid) return showToast('No se puede borrar un pago ya marcado');
+                state.reservedPayments = state.reservedPayments.filter(p => p.id !== id);
+            } else {
+                const item = state.goals.find(g => g.id === id);
+                if (!item || item.completed) return showToast('No se puede borrar una meta ya separada');
+                state.goals = state.goals.filter(g => g.id !== id);
+            }
+            recalcDailyBudgetForProtectedPlan();
+            save(); render();
+            showToast('Reserva eliminada');
+        }
+
+        function completeProtectedItem(type, id) {
+            normalizeState();
+            const list = type === 'payment' ? state.reservedPayments : state.goals;
+            const item = list.find(x => x.id === id);
+            if (!item) return;
+            if (state.totalBalance < item.amount) return showToast('Balance insuficiente');
+
+            const completedAt = new Date().toISOString();
+            if (!Array.isArray(state.protectedHistory)) state.protectedHistory = [];
+
+            state.protectedHistory.unshift({
+                id: Date.now(),
+                originalId: item.id,
+                type,
+                name: item.name,
+                amount: item.amount,
+                dueDate: item.dueDate || item.targetDate || '',
+                completedAt
+            });
+
+            state.totalBalance -= item.amount;
+
+            if (type === 'payment') {
+                state.reservedPayments = state.reservedPayments.filter(x => x.id !== id);
+            } else {
+                state.goals = state.goals.filter(x => x.id !== id);
+            }
+
+            recalcDailyBudgetForProtectedPlan();
+            save(); render();
+            showToast(type === 'payment' ? 'Pago marcado como pagado' : 'Meta separada');
+        }
+
+
+        function renderProtectedHistory() {
+            const historyEl = document.getElementById('protected-history-list');
+            const countEl = document.getElementById('protected-history-count');
+            if (!historyEl) return;
+
+            if (!Array.isArray(state.protectedHistory)) state.protectedHistory = [];
+
+            const items = [...state.protectedHistory].sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''));
+
+            if (countEl) countEl.textContent = items.length;
+
+            historyEl.innerHTML = '';
+
+            if (items.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'text-center text-xs italic text-slate-400 py-3';
+                empty.textContent = 'Aún no hay pagos ni metas completadas';
+                historyEl.appendChild(empty);
+                return;
+            }
+
+            items.slice(0, 10).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between gap-3 bg-slate-50 border border-slate-100 rounded-2xl p-3';
+
+                const info = document.createElement('div');
+                info.className = 'min-w-0';
+
+                const name = document.createElement('div');
+                name.className = 'text-sm font-extrabold text-slate-800 truncate';
+                name.textContent = item.name || (item.type === 'payment' ? 'Pago' : 'Meta');
+
+                const meta = document.createElement('div');
+                meta.className = 'text-[10px] font-bold uppercase text-slate-400';
+                const typeLabel = item.type === 'payment' ? 'Pago pagado' : 'Meta separada';
+                const dateLabel = item.completedAt ? new Date(item.completedAt).toLocaleDateString('es-PR', { day: 'numeric', month: 'short' }) : '';
+                meta.textContent = `${typeLabel}${dateLabel ? ' • ' + dateLabel : ''}`;
+
+                info.appendChild(name);
+                info.appendChild(meta);
+
+                const amount = document.createElement('div');
+                amount.className = 'text-sm font-extrabold text-emerald-700 shrink-0';
+                amount.textContent = formatCurrency(item.amount || 0);
+
+                row.appendChild(info);
+                row.appendChild(amount);
+                historyEl.appendChild(row);
+            });
+        }
+
+function renderProtectedPlan() {
+            normalizeState();
+            const paymentsTotal = getPendingPaymentsTotal();
+            const goalsTotal = getPendingGoalsTotal();
+            const freeTotal = getProtectedBalance();
+            const rawFree = getProtectedBalanceRaw();
+
+            const paymentsEl = document.getElementById('protected-payments-total');
+            const goalsEl = document.getElementById('protected-goals-total');
+            const freeEl = document.getElementById('protected-free-total');
+            const warningEl = document.getElementById('protected-warning');
+            const listEl = document.getElementById('protected-list');
+
+            if (paymentsEl) paymentsEl.textContent = formatCurrency(paymentsTotal);
+            if (goalsEl) goalsEl.textContent = formatCurrency(goalsTotal);
+            if (freeEl) freeEl.textContent = formatCurrency(freeTotal);
+
+            if (warningEl) {
+                if (rawFree < 0) {
+                    warningEl.textContent = `Plan sobre-reservado por ${formatCurrency(Math.abs(rawFree))}. Baja una meta/pago o añade dinero.`;
+                    warningEl.classList.remove('hidden');
+                } else {
+                    warningEl.classList.add('hidden');
+                    warningEl.textContent = '';
+                }
+            }
+
+            if (!listEl) return;
+            listEl.innerHTML = '';
+            const pending = [
+                ...getPendingPayments().map(item => ({ ...item, type: 'payment' })),
+                ...getPendingGoals().map(item => ({ ...item, type: 'goal' }))
+            ];
+
+            if (pending.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'bg-slate-50 border border-slate-100 rounded-2xl p-4 text-center text-xs text-slate-400 italic';
+                empty.textContent = 'Sin pagos ni metas pendientes';
+                listEl.appendChild(empty);
+                return;
+            }
+
+            pending.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center justify-between gap-3';
+
+                const info = document.createElement('div');
+                info.className = 'min-w-0 flex-grow';
+
+                const label = document.createElement('div');
+                label.className = 'text-sm font-extrabold text-slate-800 truncate';
+                label.textContent = item.name;
+
+                const meta = document.createElement('div');
+                meta.className = 'text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5';
+                const typeLabel = item.type === 'payment' ? 'Pago' : 'Meta';
+                const dateLabel = item.dueDate ? ` • ${formatDateShort(item.dueDate)}` : '';
+                meta.textContent = `${typeLabel}${dateLabel}`;
+
+                info.appendChild(label);
+                info.appendChild(meta);
+
+                const actions = document.createElement('div');
+                actions.className = 'flex items-center gap-2 shrink-0';
+
+                const amount = document.createElement('div');
+                amount.className = 'text-sm font-extrabold text-slate-900';
+                amount.textContent = formatCurrency(item.amount);
+
+                const doneBtn = document.createElement('button');
+                doneBtn.type = 'button';
+                doneBtn.className = 'action-button text-[10px] font-extrabold uppercase px-2 py-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100';
+                doneBtn.textContent = item.type === 'payment' ? 'Pagado' : 'Separar';
+                doneBtn.addEventListener('click', () => completeProtectedItem(item.type, item.id));
+
+                const delBtn = document.createElement('button');
+                delBtn.type = 'button';
+                delBtn.className = 'action-button text-[10px] font-extrabold uppercase px-2 py-2 rounded-xl bg-red-50 text-red-700 border border-red-100';
+                delBtn.textContent = 'X';
+                delBtn.addEventListener('click', () => deleteProtectedItem(item.type, item.id));
+
+                actions.appendChild(amount);
+                actions.appendChild(doneBtn);
+                actions.appendChild(delBtn);
+                row.appendChild(info);
+                row.appendChild(actions);
+                listEl.appendChild(row);
+            });
+        }
+
+        function updateSpendModes(availableToday) {
+            const safeAvailable = Math.max(availableToday, 0);
+            const strict = Math.round(safeAvailable * 0.80);
+            const normal = safeAvailable;
+            const flexible = Math.min(state.totalBalance, Math.round(safeAvailable * 1.20));
+
+            const strictEl = document.getElementById('display-mode-strict');
+            const normalEl = document.getElementById('display-mode-normal');
+            const flexibleEl = document.getElementById('display-mode-flexible');
+
+            if (strictEl) strictEl.innerText = formatCurrency(strict);
+            if (normalEl) normalEl.innerText = formatCurrency(normal);
+            if (flexibleEl) flexibleEl.innerText = formatCurrency(flexible);
+        }
+
+        function getTodaySpent() {
+            const todayEx = state.expenses.filter(e => e.dayIndex === state.daysLeft);
+            return todayEx.reduce((acc, c) => acc + c.amount, 0);
+        }
+
+        function resetSafeSpendResult() {
+            const resultEl = document.getElementById('safe-spend-result');
+            if (!resultEl) return;
+            resultEl.classList.add('hidden');
+            resultEl.textContent = '';
+        }
+
+        function checkSafeSpend() {
+            if (!state.isInitialized || state.daysLeft <= 0) return;
+
+            const amountEl = document.getElementById('safe-spend-amount');
+            const resultEl = document.getElementById('safe-spend-result');
+            const amount = toCents(amountEl.value);
+
+            if (amount <= 0 || isNaN(amount)) {
+                resultEl.className = 'rounded-2xl p-4 text-sm bg-red-50 text-red-700 border border-red-100';
+                resultEl.textContent = 'Escribe una cantidad válida.';
+                resultEl.classList.remove('hidden');
+                return;
+            }
+
+            const spentToday = getTodaySpent();
+            const availableToday = state.dailyBudget - spentToday;
+            const afterToday = availableToday - amount;
+            const protectedBalance = getProtectedBalance();
+            const projectedProtectedBalance = protectedBalance - amount;
+
+            let tomorrowBudget = 0;
+            if (state.daysLeft > 1) {
+                tomorrowBudget = Math.round(Math.max(projectedProtectedBalance, 0) / (state.daysLeft - 1));
+            }
+
+            resultEl.classList.remove('hidden');
+
+            if (amount <= availableToday) {
+                resultEl.className = 'rounded-2xl p-4 text-sm bg-emerald-50 text-emerald-700 border border-emerald-100';
+                resultEl.textContent = `Sí. Puedes gastar ${formatCurrency(amount)} y todavía te quedarían ${formatCurrency(afterToday)} para hoy.`;
+                return;
+            }
+
+            if (projectedProtectedBalance >= 0 && state.daysLeft > 1) {
+                resultEl.className = 'rounded-2xl p-4 text-sm bg-amber-50 text-amber-700 border border-amber-100';
+                resultEl.textContent = `Cuidado. Te pasas por ${formatCurrency(Math.abs(afterToday))} del presupuesto de hoy, y mañana tu presupuesto bajaría a ${formatCurrency(tomorrowBudget)}.`;
+                return;
+            }
+
+            if (projectedProtectedBalance >= 0 && state.daysLeft === 1) {
+                resultEl.className = 'rounded-2xl p-4 text-sm bg-amber-50 text-amber-700 border border-amber-100';
+                resultEl.textContent = `Cuidado. Puedes pagarlo, pero cerrarías el periodo con ${formatCurrency(projectedProtectedBalance)}.`;
+                return;
+            }
+
+            resultEl.className = 'rounded-2xl p-4 text-sm bg-red-50 text-red-700 border border-red-100';
+            resultEl.textContent = `No recomendable. Ese gasto rompe tu plan protegido por ${formatCurrency(Math.abs(projectedProtectedBalance))}.`;
+        }
+
         function finishDay() {
             if (state.daysLeft <= 0) return;
             // Mostrar modal de confirmación en lugar de ejecutar directamente.
@@ -519,8 +1099,7 @@
             document.getElementById('confirm-modal').classList.add('hidden');
             if (state.daysLeft <= 0) return;
 
-            const todayEx = state.expenses.filter(e => e.dayIndex === state.daysLeft);
-            const spent = todayEx.reduce((acc, c) => acc + c.amount, 0);
+            const spent = getTodaySpent();
             const leftover = state.dailyBudget - spent;
 
             if (state.daysLeft === 1) {
@@ -528,9 +1107,12 @@
                 state.dailyBudget = 0;
             } else {
                 state.daysLeft -= 1;
-                // FIX #2: Math.round en lugar de Math.floor (mismo criterio que initializeBudget).
-                state.dailyBudget = Math.round(state.totalBalance / state.daysLeft);
+                // Recalcula usando el dinero libre después de pagos/metas reservadas.
+                state.dailyBudget = calculateProtectedDailyBudget();
             }
+
+            const safeSpendAmountEl = document.getElementById('safe-spend-amount');
+            if (safeSpendAmountEl) safeSpendAmountEl.value = '';
 
             save(); render();
 
@@ -543,7 +1125,26 @@
             }
         }
 
-        function render() {
+        
+        function syncHistoryVisibility() {
+            const wrapper = document.getElementById('history-wrapper');
+            const btn = document.getElementById('history-toggle-btn');
+            if (wrapper) wrapper.classList.toggle('hidden-section', !isHistoryVisible);
+            if (btn) btn.textContent = isHistoryVisible ? 'Ocultar' : 'Ver';
+        }
+
+        function toggleHistoryVisibility() {
+            isHistoryVisible = !isHistoryVisible;
+            syncHistoryVisibility();
+        }
+
+        function collapseHistory() {
+            isHistoryVisible = false;
+            syncHistoryVisibility();
+        }
+
+function render() {
+            normalizeState();
             if (!state.isInitialized) {
                 document.getElementById('setup-section').classList.remove('hidden-section');
                 document.getElementById('main-section').classList.add('hidden-section');
@@ -560,6 +1161,8 @@
             document.getElementById('completed-card').classList.toggle('hidden', !isCompleted);
             document.getElementById('input-area').classList.toggle('hidden-section', isCompleted);
             document.getElementById('btn-finish-day').classList.toggle('hidden-section', isCompleted);
+            document.getElementById('safe-spend-card').classList.toggle('hidden-section', isCompleted);
+            document.getElementById('protected-plan-card').classList.toggle('hidden-section', isCompleted);
 
             if (isCompleted) {
                 document.getElementById('display-completed-remaining').innerText = formatCurrency(state.totalBalance);
@@ -578,7 +1181,7 @@
             periodMetaEl.classList.toggle('hidden', !state.periodName && !state.startDate);
 
             const todayEx = state.expenses.filter(e => e.dayIndex === state.daysLeft);
-            const spent = todayEx.reduce((acc, c) => acc + c.amount, 0);
+            const spent = getTodaySpent();
             const avail = state.dailyBudget - spent;
 
             document.getElementById('display-daily-budget').innerText = formatCurrency(state.dailyBudget);
@@ -586,6 +1189,11 @@
             document.getElementById('display-daily-available').innerText = formatCurrency(avail);
             document.getElementById('display-days-left').innerText = state.daysLeft;
             document.getElementById('display-total-remaining').innerText = formatCurrency(state.totalBalance);
+            updateSpendModes(avail);
+            renderProtectedPlan();
+            renderProtectedHistory();
+            resetSafeSpendResult();
+            syncHistoryVisibility();
 
             // Color en negativo: cambia el fondo de la tarjeta y el color del monto disponible
             // cuando el usuario ha gastado más de su presupuesto diario.
@@ -758,6 +1366,10 @@
                         return showToast('Archivo inválido o corrupto');
                     }
                     state = parsed;
+                    normalizeState();
+                    if (state.isInitialized && state.daysLeft > 0 && typeof state.dailyBudget !== 'number') {
+                        recalcDailyBudgetForProtectedPlan();
+                    }
                     save();
                     render();
                     showToast('Datos importados correctamente');
@@ -787,16 +1399,31 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            const historyToggleBtn = document.getElementById('history-toggle-btn');
+            if (historyToggleBtn) historyToggleBtn.addEventListener('click', toggleHistoryVisibility);
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 try {
                     state = JSON.parse(saved);
+                    normalizeState();
                 } catch (e) {
                     localStorage.removeItem(STORAGE_KEY);
                 }
             }
             
             document.getElementById('btn-reset-app').addEventListener('click', resetApp);
+            document.getElementById('btn-safe-spend-check').addEventListener('click', checkSafeSpend);
+            document.getElementById('safe-spend-amount').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') checkSafeSpend();
+            });
+            document.getElementById('safe-spend-amount').addEventListener('input', resetSafeSpendResult);
+            document.getElementById('btn-add-payment').addEventListener('click', () => openProtectedModal('payment'));
+            document.getElementById('btn-add-goal').addEventListener('click', () => openProtectedModal('goal'));
+            document.getElementById('protected-cancel').addEventListener('click', closeProtectedModal);
+            document.getElementById('protected-save').addEventListener('click', saveProtectedItem);
+            document.getElementById('protected-amount').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') saveProtectedItem();
+            });
             document.getElementById('btn-guide').addEventListener('click', () => {
                 document.getElementById('guide-modal').classList.remove('hidden');
             });
@@ -851,5 +1478,42 @@
             });
         }
     </script>
+
+<script>
+/* DailyBudget v5.6 — historial limpio */
+(function () {
+    function setHistoryVisible(visible) {
+        var wrapper = document.getElementById('history-wrapper');
+        var button = document.getElementById('history-toggle-btn');
+        if (!wrapper || !button) return;
+
+        wrapper.classList.toggle('hidden-section', !visible);
+        button.textContent = visible ? 'Ocultar' : 'Ver';
+        button.setAttribute('aria-expanded', visible ? 'true' : 'false');
+    }
+
+    function initHistoryToggle() {
+        var button = document.getElementById('history-toggle-btn');
+        if (!button) return;
+
+        var visible = false;
+        setHistoryVisible(false);
+
+        button.addEventListener('click', function () {
+            visible = !visible;
+            setHistoryVisible(visible);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHistoryToggle);
+    } else {
+        initHistoryToggle();
+    }
+})();
+</script>
+
+
+<!-- DailyBudget v5.8 guía actualizada incluida en LEEME-PRIMERO.html e INSTRUCCIONES.txt -->
 </body>
 </html>
