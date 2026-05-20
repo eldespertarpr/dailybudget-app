@@ -8,13 +8,16 @@
    no en el cache — el SW no los toca nunca.
    ============================================ */
 
-const CACHE_NAME = 'dailybudget-v2';
+const CACHE_NAME = 'dailybudget-v8';
 
 // Assets que se cachean al instalar.
 // Solo el HTML principal — Tailwind CDN y Google Fonts
 // se cachean dinámicamente en el primer uso.
 const PRECACHE_ASSETS = [
-  './index.html'
+  './index.html',
+  './manifest.json',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
 ];
 
 // ── INSTALL ──────────────────────────────────
