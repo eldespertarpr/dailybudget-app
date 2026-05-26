@@ -1,0 +1,14 @@
+SUBIR ESTOS ARCHIVOS A GITHUB
+
+1. En el repo dailybudget-app, usa Add file -> Upload files.
+2. Sube index.html y sw.js de este paquete.
+3. GitHub preguntará si deseas reemplazar los existentes. Acepta.
+4. Commit: Actualizar DailyBudget v6.5 y cache v10.
+
+NO tocar:
+- manifest.json
+- carpeta icons/
+- icon-192.png
+- icon-512.png
+
+Luego abre la app instalada. Si no ves Estado del día, borra datos del sitio eldespertarpr.github.io y abre de nuevo.
