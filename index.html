@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DailyBudget</title>
+    <!-- DailyBudget v6.5 pwa-github-pages -->
     <!-- DailyBudget v5.8 candidata-publicacion -->
     <!-- DailyBudget v5.7 historial-protegido -->
     <!-- DailyBudget v5.2 pulida-metas-pagos -->
@@ -11,9 +12,10 @@
     <!-- DailyBudget v4.2 pulida-final -->
     <!-- PWA: manifest e íconos para instalación en pantalla de inicio -->
     <meta name="description" content="DailyBudget: presupuesto diario offline, sin cuenta y sin suscripción.">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/dailybudget-app/manifest.json">
     <meta name="theme-color" content="#4f46e5">
-    <meta name="mobile-web-app-capable"content=yes>
+        <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="DailyBudget">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="DailyBudget">
@@ -85,6 +87,7 @@
         #status-card.is-negative { background-color: #dc2626; } /* red-600 */
         #display-daily-available.is-negative { color: #fca5a5; } /* red-300, legible sobre rojo */
     </style>
+    <!-- v6.5 historial sin base visible: muestra gasto y resultado solamente -->
 </head>
 <body>
 
@@ -198,6 +201,19 @@
                     <button id="btn-new-period" class="action-button w-full bg-emerald-800 text-white font-bold py-3 rounded-2xl text-sm">
                         Iniciar nuevo periodo
                     </button>
+                </div>
+            </div>
+
+
+            <!-- Day Status / Calendar Guard -->
+            <div id="day-status-card" class="app-card p-4 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Estado del día</p>
+                    <p id="display-today-date" class="text-sm font-extrabold text-slate-800">Hoy</p>
+                    <p id="display-last-closed" class="text-xs text-slate-400 mt-1">Aún no has cerrado día hoy.</p>
+                </div>
+                <div id="day-status-badge" class="shrink-0 text-[10px] font-extrabold uppercase px-3 py-2 rounded-full bg-slate-100 text-slate-500">
+                    Abierto
                 </div>
             </div>
 
@@ -564,7 +580,9 @@
             expenses: [],
             reservedPayments: [],
             goals: [],
-            protectedHistory: []
+            protectedHistory: [],
+            lastClosedAt: '',
+            lastClosedDayIndex: null
         };
 
         const STORAGE_KEY = 'daily_budget_pro_v5';
@@ -715,6 +733,8 @@
             if (!Array.isArray(state.reservedPayments)) state.reservedPayments = [];
             if (!Array.isArray(state.goals)) state.goals = [];
             if (!Array.isArray(state.protectedHistory)) state.protectedHistory = [];
+            if (typeof state.lastClosedAt !== 'string') state.lastClosedAt = '';
+            if (state.lastClosedDayIndex === undefined) state.lastClosedDayIndex = null;
         }
 
         function getPendingPayments() {
@@ -1090,8 +1110,70 @@ function renderProtectedPlan() {
             resultEl.textContent = `No recomendable. Ese gasto rompe tu plan protegido por ${formatCurrency(Math.abs(projectedProtectedBalance))}.`;
         }
 
+
+        function getLocalDateKey(date = new Date()) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatLocalDate(date = new Date()) {
+            return date.toLocaleDateString('es-PR', {
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+
+        function formatLocalTime(date) {
+            return date.toLocaleTimeString('es-PR', {
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+
+        function wasClosedToday() {
+            if (!state.lastClosedAt) return false;
+            return getLocalDateKey(new Date(state.lastClosedAt)) === getLocalDateKey(new Date());
+        }
+
+        function updateDayStatus() {
+            const todayEl = document.getElementById('display-today-date');
+            const lastEl = document.getElementById('display-last-closed');
+            const badgeEl = document.getElementById('day-status-badge');
+            if (!todayEl || !lastEl || !badgeEl) return;
+
+            const now = new Date();
+            todayEl.textContent = `Hoy: ${formatLocalDate(now)}`;
+
+            if (state.lastClosedAt) {
+                const closedDate = new Date(state.lastClosedAt);
+                const dayLabel = state.lastClosedDayIndex ? `Día ${state.lastClosedDayIndex}` : 'Día';
+                lastEl.textContent = `Último cierre: ${dayLabel} • ${formatLocalDate(closedDate)} ${formatLocalTime(closedDate)}`;
+            } else {
+                lastEl.textContent = 'Aún no has cerrado ningún día.';
+            }
+
+            if (wasClosedToday()) {
+                badgeEl.textContent = 'Cerrado hoy';
+                badgeEl.className = 'shrink-0 text-[10px] font-extrabold uppercase px-3 py-2 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100';
+            } else {
+                badgeEl.textContent = 'Abierto';
+                badgeEl.className = 'shrink-0 text-[10px] font-extrabold uppercase px-3 py-2 rounded-full bg-slate-100 text-slate-500';
+            }
+        }
+
         function finishDay() {
             if (state.daysLeft <= 0) return;
+
+            if (wasClosedToday()) {
+                const last = new Date(state.lastClosedAt);
+                const msg = `Ya cerraste un día hoy a las ${formatLocalTime(last)}. ¿Seguro que quieres cerrar otro día?`;
+                if (!confirm(msg)) return;
+            }
+
             // Mostrar modal de confirmación en lugar de ejecutar directamente.
             document.getElementById('confirm-modal').classList.remove('hidden');
         }
@@ -1102,6 +1184,7 @@ function renderProtectedPlan() {
 
             const spent = getTodaySpent();
             const leftover = state.dailyBudget - spent;
+            const closedDayIndex = state.daysLeft;
 
             if (state.daysLeft === 1) {
                 state.daysLeft = 0;
@@ -1111,6 +1194,9 @@ function renderProtectedPlan() {
                 // Recalcula usando el dinero libre después de pagos/metas reservadas.
                 state.dailyBudget = calculateProtectedDailyBudget();
             }
+
+            state.lastClosedAt = new Date().toISOString();
+            state.lastClosedDayIndex = closedDayIndex;
 
             const safeSpendAmountEl = document.getElementById('safe-spend-amount');
             if (safeSpendAmountEl) safeSpendAmountEl.value = '';
@@ -1193,6 +1279,7 @@ function render() {
             updateSpendModes(avail);
             renderProtectedPlan();
             renderProtectedHistory();
+            updateDayStatus();
             resetSafeSpendResult();
             syncHistoryVisibility();
 
@@ -1329,7 +1416,7 @@ function render() {
                         </div>
                         <div class="flex justify-between text-xs">
                             <span class="text-slate-500">Gastado: ${formatCurrency(data.spent)}</span>
-                            <span class="text-slate-500 font-semibold">Base: ${formatCurrency(data.budget)}</span>
+                            
                         </div>
                     `;
                     historyList.appendChild(card);
@@ -1471,7 +1558,7 @@ function render() {
         // No toca ninguna lógica existente — es completamente independiente.
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(() => {
+                navigator.serviceWorker.register('/dailybudget-app/sw.js', { scope: '/dailybudget-app/' }).catch(() => {
                     // Si falla el registro (ej. archivo no encontrado en desarrollo),
                     // la app sigue funcionando con normalidad — el SW es una mejora
                     // progresiva, no un requisito.
