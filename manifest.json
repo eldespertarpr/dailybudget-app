@@ -1,25 +1,33 @@
 {
   "name": "DailyBudget",
   "short_name": "DailyBudget",
-  "description": "Distribuye tu balance entre días, registra gastos y controla lo que queda.",
-  "start_url": "./index.html",
+  "id": "/dailybudget-app/",
+  "scope": "/dailybudget-app/",
+  "start_url": "/dailybudget-app/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f1f5f9",
   "theme_color": "#4f46e5",
-  "orientation": "portrait",
   "lang": "es",
+  "description": "Distribuye tu balance entre días, registra gastos y controla lo que queda.",
   "icons": [
     {
       "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
