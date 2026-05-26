@@ -8,12 +8,13 @@
    no en el cache — el SW no los toca nunca.
    ============================================ */
 
-const CACHE_NAME = 'dailybudget-v8';
+const CACHE_NAME = 'dailybudget-v9';
 
 // Assets que se cachean al instalar.
 // Solo el HTML principal — Tailwind CDN y Google Fonts
 // se cachean dinámicamente en el primer uso.
 const PRECACHE_ASSETS = [
+  './',
   './index.html',
   './manifest.json',
   './icons/icon-192.png',
@@ -24,10 +25,22 @@ const PRECACHE_ASSETS = [
 // Precachea el HTML al instalar. skipWaiting()
 // activa el nuevo SW inmediatamente sin esperar
 // a que se cierren todas las pestañas.
+//
+// Se usa cache.add() individual con catch en lugar
+// de cache.addAll() para que el SW pueda instalarse
+// aunque algún recurso opcional falle puntualmente.
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_ASSETS);
+      return Promise.all(
+        PRECACHE_ASSETS.map((url) =>
+          cache.add(url).catch(() => {
+            // Si un asset puntual falla, lo ignoramos.
+            // El SW se instala igual y los recursos se
+            // intentan cachear de nuevo en el primer fetch.
+          })
+        )
+      );
     })
   );
   self.skipWaiting();
