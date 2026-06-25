@@ -1,5 +1,5 @@
-/* DailyBudget print weekly report v1
-   Añade un resumen semanal imprimible por categoría sin tocar cálculos.
+/* DailyBudget printable period report v2
+   Añade un resumen imprimible del periodo por categoría sin tocar cálculos.
 */
 (function () {
     var STORAGE_KEY = 'daily_budget_pro_v5';
@@ -30,20 +30,6 @@
         }
     }
 
-    function startOfLocalDay(date) {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    }
-
-    function getLastSevenDaysRange() {
-        var end = startOfLocalDay(new Date());
-        end.setHours(23, 59, 59, 999);
-
-        var start = startOfLocalDay(new Date());
-        start.setDate(start.getDate() - 6);
-
-        return { start: start, end: end };
-    }
-
     function formatDate(date) {
         return date.toLocaleDateString('es-PR', {
             day: 'numeric',
@@ -65,16 +51,34 @@
         }
     }
 
-    function getWeeklyExpenses(state) {
-        var range = getLastSevenDaysRange();
+    function getPeriodLabel(state) {
+        var name = state.periodName || 'Periodo actual';
+        var start = state.startDate || '';
+        var configuredDays = Number(state.initialDays || 0);
+        var daysLeft = Number(state.daysLeft || 0);
+        var elapsedDays = Math.max(configuredDays - daysLeft + 1, 1);
+
+        return {
+            name: name,
+            start: start,
+            configuredDays: configuredDays,
+            daysLeft: daysLeft,
+            elapsedDays: elapsedDays
+        };
+    }
+
+    function getPeriodExpenses(state) {
+        var initialDays = Number(state.initialDays || 0);
         return state.expenses
             .filter(function (expense) {
-                if (!expense || !expense.timestamp) return false;
-                var d = new Date(expense.timestamp);
-                return d >= range.start && d <= range.end;
+                if (!expense) return false;
+                if (typeof expense.dayIndex === 'number') {
+                    return expense.dayIndex <= initialDays && expense.dayIndex >= 0;
+                }
+                return true;
             })
             .sort(function (a, b) {
-                return new Date(a.timestamp) - new Date(b.timestamp);
+                return new Date(a.timestamp || 0) - new Date(b.timestamp || 0);
             });
     }
 
@@ -140,20 +144,20 @@
         }, 350);
     }
 
-    function printWeeklyReport() {
+    function printPeriodReport() {
         var state = parseState();
         if (!state) {
             alert('No hay datos suficientes para imprimir.');
             return;
         }
 
-        var range = getLastSevenDaysRange();
-        var expenses = getWeeklyExpenses(state);
+        var period = getPeriodLabel(state);
+        var expenses = getPeriodExpenses(state);
         var categories = summarizeByCategory(expenses);
         var total = expenses.reduce(function (acc, expense) {
             return acc + Number(expense.amount || 0);
         }, 0);
-        var average = Math.round(total / 7);
+        var average = Math.round(total / Math.max(period.elapsedDays, 1));
         var topCategory = categories.length ? categories[0] : null;
 
         var detailRows = buildRows(expenses.map(function (expense) {
@@ -177,7 +181,7 @@
         var html = '<!doctype html>' +
         '<html lang="es"><head><meta charset="utf-8">' +
         '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-        '<title>Resumen semanal - DailyBudget</title>' +
+        '<title>Resumen del periodo - DailyBudget</title>' +
         '<style>' +
         'body{font-family:Arial,Helvetica,sans-serif;color:#0f172a;margin:0;background:#fff;padding:28px;}' +
         '.page{max-width:820px;margin:0 auto;}' +
@@ -201,21 +205,22 @@
         '@media(max-width:720px){body{padding:18px}.header{display:block}.cards{grid-template-columns:repeat(2,1fr)}}' +
         '</style></head><body><div class="page">' +
         '<div class="header"><div>' +
-        '<h1>Resumen semanal</h1>' +
-        '<div class="muted">DailyBudget · ' + escapeHtml(state.periodName || 'Periodo') + '</div>' +
-        '<div class="muted">' + escapeHtml(formatDate(range.start)) + ' – ' + escapeHtml(formatDate(range.end)) + '</div>' +
+        '<h1>Resumen del periodo</h1>' +
+        '<div class="muted">DailyBudget · ' + escapeHtml(period.name) + '</div>' +
+        '<div class="muted">Inicio: ' + escapeHtml(period.start || 'No disponible') + '</div>' +
+        '<div class="muted">Días configurados: ' + escapeHtml(period.configuredDays || '—') + ' · Días restantes: ' + escapeHtml(period.daysLeft || 0) + '</div>' +
         '</div><div class="muted">Generado: ' + escapeHtml(generatedAt) + '</div></div>' +
         '<div class="cards">' +
         '<div class="card"><div class="label">Total gastado</div><div class="value">' + money(total) + '</div></div>' +
-        '<div class="card"><div class="label">Promedio diario</div><div class="value">' + money(average) + '</div></div>' +
+        '<div class="card"><div class="label">Promedio diario usado</div><div class="value">' + money(average) + '</div></div>' +
         '<div class="card"><div class="label">Transacciones</div><div class="value">' + expenses.length + '</div></div>' +
         '<div class="card"><div class="label">Mayor categoría</div><div class="value" style="font-size:14px">' + escapeHtml(topCategory ? topCategory.category : '—') + '</div></div>' +
         '</div>' +
         '<h2>Gastos por categoría</h2>' +
-        (categories.length ? '<table><thead><tr><th>Categoría</th><th class="amount">Total</th></tr></thead><tbody>' + categoryRows + '</tbody></table>' : '<div class="empty">No hay gastos registrados en los últimos 7 días.</div>') +
+        (categories.length ? '<table><thead><tr><th>Categoría</th><th class="amount">Total</th></tr></thead><tbody>' + categoryRows + '</tbody></table>' : '<div class="empty">No hay gastos registrados en este periodo.</div>') +
         '<h2>Detalle de gastos</h2>' +
-        (expenses.length ? '<table><thead><tr><th>Fecha</th><th>Categoría</th><th>Concepto</th><th class="amount">Cantidad</th></tr></thead><tbody>' + detailRows + '</tbody></table>' : '<div class="empty">Todavía no hay gastos para imprimir en esta semana.</div>') +
-        '<div class="note">Nota: este resumen incluye los gastos registrados en “Registrar gasto”. Los pagos o metas en “Dinero que no debes tocar” no se duplican aquí.</div>' +
+        (expenses.length ? '<table><thead><tr><th>Fecha</th><th>Categoría</th><th>Concepto</th><th class="amount">Cantidad</th></tr></thead><tbody>' + detailRows + '</tbody></table>' : '<div class="empty">Todavía no hay gastos para imprimir en este periodo.</div>') +
+        '<div class="note">Nota: este resumen incluye los gastos registrados en “Registrar gasto” durante el periodo actual. Los pagos o metas en “Dinero que no debes tocar” no se duplican aquí.</div>' +
         '<div class="actions"><button onclick="window.print()">Imprimir / Guardar PDF</button><button onclick="window.close()" style="background:#64748b">Cerrar</button></div>' +
         '</div></body></html>';
 
@@ -223,7 +228,13 @@
     }
 
     function addPrintButton() {
-        if (document.getElementById('btn-print-weekly')) return;
+        var oldBtn = document.getElementById('btn-print-weekly');
+        if (oldBtn) {
+            oldBtn.textContent = 'Imprimir periodo';
+            oldBtn.removeEventListener('click', printPeriodReport);
+            oldBtn.addEventListener('click', printPeriodReport);
+            return;
+        }
 
         var summary = document.getElementById('weekly-summary-area');
         if (!summary) return;
@@ -232,8 +243,8 @@
         btn.id = 'btn-print-weekly';
         btn.type = 'button';
         btn.className = 'action-button w-full bg-white border border-slate-200 text-slate-700 font-bold py-3 rounded-2xl shadow-sm text-sm';
-        btn.textContent = 'Imprimir semana';
-        btn.addEventListener('click', printWeeklyReport);
+        btn.textContent = 'Imprimir periodo';
+        btn.addEventListener('click', printPeriodReport);
 
         summary.insertAdjacentElement('afterend', btn);
     }
