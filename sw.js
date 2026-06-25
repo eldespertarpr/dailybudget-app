@@ -3,7 +3,7 @@
    Service Worker mínimo y estable.
    ============================================ */
 
-const CACHE_NAME = 'dailybudget-v14';
+const CACHE_NAME = 'dailybudget-v15';
 const INJECTED_SCRIPTS = [
   '<script src="./persistence-fix.js"></script>',
   '<script src="./ui-polish.js"></script>',
