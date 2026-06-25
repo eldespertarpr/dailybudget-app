@@ -3,11 +3,12 @@
    Service Worker mínimo y estable.
    ============================================ */
 
-const CACHE_NAME = 'dailybudget-v15';
+const CACHE_NAME = 'dailybudget-v16';
 const INJECTED_SCRIPTS = [
   '<script src="./persistence-fix.js"></script>',
   '<script src="./ui-polish.js"></script>',
-  '<script src="./print-weekly.js"></script>'
+  '<script src="./print-weekly.js"></script>',
+  '<script src="./sales-polish.js"></script>'
 ];
 
 const PRECACHE_ASSETS = [
@@ -17,6 +18,7 @@ const PRECACHE_ASSETS = [
   './persistence-fix.js',
   './ui-polish.js',
   './print-weekly.js',
+  './sales-polish.js',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ];
