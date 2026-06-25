@@ -3,12 +3,13 @@
    Service Worker mínimo y estable.
    ============================================ */
 
-const CACHE_NAME = 'dailybudget-v10';
+const CACHE_NAME = 'dailybudget-v11';
 
 const PRECACHE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './persistence-fix.js',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ];
