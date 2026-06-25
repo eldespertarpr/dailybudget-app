@@ -1,17 +1,10 @@
-/* DailyBudget sales polish v1
+/* DailyBudget sales polish v2
    Mejoras de confianza y guía para versión en venta.
    No toca cálculos ni estructura principal.
 */
 (function () {
     function $(selector, root) {
         return (root || document).querySelector(selector);
-    }
-
-    function createEl(tag, className, text) {
-        var el = document.createElement(tag);
-        if (className) el.className = className;
-        if (text) el.textContent = text;
-        return el;
     }
 
     function addPrivacyNote() {
@@ -74,7 +67,7 @@
             var btn = event.target && event.target.closest ? event.target.closest('#btn-reset-app') : null;
             if (!btn) return;
 
-            var message = 'Esto borrará el plan actual de este dispositivo.\n\nAntes de continuar, guarda un respaldo si quieres conservar tus datos.\n\n¿Seguro que quieres crear un nuevo plan?';
+            var message = 'Esto borrará el plan actual de este dispositivo.\n\nAntes de continuar, usa Respaldo si quieres conservar tus datos.\n\n¿Seguro que quieres crear un nuevo plan?';
             if (!window.confirm(message)) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
@@ -99,7 +92,7 @@
             '</div>' +
             '<div class="space-y-1">' +
                 '<h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Cómo empezar</h3>' +
-                '<p class="text-sm text-slate-600 leading-relaxed">Escribe el balance real de tu cuenta y los días hasta tu próximo pago. DailyBudget divide tu dinero para que sepas cuánto puedes gastar cada día.</p>' +
+                '<p class="text-sm text-slate-600 leading-relaxed">Escribe el balance real de tu cuenta y los días hasta tu próximo pago. Luego toca “Calcular mi presupuesto diario”.</p>' +
             '</div>' +
             '<div class="space-y-1">' +
                 '<h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Dinero que no debes tocar</h3>' +
@@ -115,10 +108,31 @@
             '</div>' +
             '<div class="space-y-1">' +
                 '<h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Respaldo</h3>' +
-                '<p class="text-sm text-slate-600 leading-relaxed">Guarda un respaldo antes de cambiar de teléfono, borrar el navegador o crear un nuevo plan.</p>' +
+                '<p class="text-sm text-slate-600 leading-relaxed">Toca “Respaldo” para guardar un archivo de tus datos. Usa “Restaurar respaldo” cuando quieras cargar un archivo guardado.</p>' +
             '</div>';
 
         guideBody.insertAdjacentElement('afterbegin', block);
+    }
+
+    function cleanOldGuideText() {
+        var guideBody = $('#guide-modal .px-6.py-5');
+        if (!guideBody || guideBody.dataset.currentLabelsCleaned === '1') return;
+
+        var walker = document.createTreeWalker(guideBody, NodeFilter.SHOW_TEXT, null);
+        var nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+
+        nodes.forEach(function (node) {
+            node.nodeValue = node.nodeValue
+                .replace(/Comenzar Plan/g, 'Calcular mi presupuesto diario')
+                .replace(/Exportar/g, 'Respaldo')
+                .replace(/exportar/g, 'guardar respaldo')
+                .replace(/Importar datos desde archivo/g, 'Restaurar respaldo')
+                .replace(/Importar/g, 'Restaurar respaldo')
+                .replace(/importar/g, 'restaurar respaldo');
+        });
+
+        guideBody.dataset.currentLabelsCleaned = '1';
     }
 
     function polishBackupButton() {
@@ -134,6 +148,7 @@
         addProtectedHelp();
         addReportHelp();
         enhanceGuide();
+        cleanOldGuideText();
         polishBackupButton();
     }
 
@@ -149,5 +164,6 @@
         applySalesPolish();
         setTimeout(applySalesPolish, 400);
         setTimeout(applySalesPolish, 1200);
+        setTimeout(applySalesPolish, 2200);
     });
 })();
