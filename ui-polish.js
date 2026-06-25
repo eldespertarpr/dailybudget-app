@@ -1,4 +1,4 @@
-/* DailyBudget UI polish v1
+/* DailyBudget UI polish v2
    Reorganiza textos y orden visual sin tocar cálculos ni estado.
 */
 (function () {
@@ -129,8 +129,9 @@
         addFinishHelp();
         createMoreInfoBlock(main);
 
-        // Orden pensado para vender simplicidad: número principal → gasto → cerrar día → detalles.
+        // Orden pensado para venta: privacidad → número principal → uso diario → detalles → reporte.
         appendInOrder(main, [
+            'dailybudget-privacy-note',
             'status-card',
             'completed-card',
             'dailybudget-main-flow-label',
@@ -141,7 +142,9 @@
             'safe-spend-card',
             'dailybudget-more-info-title',
             'protected-plan-card',
-            'weekly-summary-area'
+            'weekly-summary-area',
+            'btn-print-weekly',
+            'dailybudget-report-help'
         ]);
 
         var expenseList = document.getElementById('expense-list');
@@ -184,5 +187,6 @@
         applyPolish();
         setTimeout(applyPolish, 300);
         setTimeout(applyPolish, 1200);
+        setTimeout(applyPolish, 2200);
     });
 })();
