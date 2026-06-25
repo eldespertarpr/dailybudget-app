@@ -3,14 +3,18 @@
    Service Worker mínimo y estable.
    ============================================ */
 
-const CACHE_NAME = 'dailybudget-v12';
-const PERSISTENCE_SCRIPT = '<script src="./persistence-fix.js"></script>';
+const CACHE_NAME = 'dailybudget-v13';
+const INJECTED_SCRIPTS = [
+  '<script src="./persistence-fix.js"></script>',
+  '<script src="./ui-polish.js"></script>'
+];
 
 const PRECACHE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './persistence-fix.js',
+  './ui-polish.js',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ];
@@ -24,13 +28,18 @@ function shouldHandleAsIndex(request) {
   );
 }
 
-async function injectPersistenceGuard(response) {
+async function injectEnhancements(response) {
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('text/html')) return response;
 
   let html = await response.text();
-  if (!html.includes('persistence-fix.js')) {
-    html = html.replace('</body>', `${PERSISTENCE_SCRIPT}\n</body>`);
+  const scriptsToAdd = INJECTED_SCRIPTS.filter((script) => {
+    const match = script.match(/src="\.\/(.*?)"/);
+    return match ? !html.includes(match[1]) : !html.includes(script);
+  });
+
+  if (scriptsToAdd.length > 0) {
+    html = html.replace('</body>', `${scriptsToAdd.join('\n')}\n</body>`);
   }
 
   return new Response(html, {
@@ -80,12 +89,12 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache).catch(() => {});
           });
-          return injectPersistenceGuard(networkResponse);
+          return injectEnhancements(networkResponse);
         })
         .catch(() => caches.match(event.request).then((cached) => {
-          if (cached) return injectPersistenceGuard(cached);
+          if (cached) return injectEnhancements(cached);
           return caches.match('./index.html').then((fallback) => {
-            if (fallback) return injectPersistenceGuard(fallback);
+            if (fallback) return injectEnhancements(fallback);
             return new Response('DailyBudget no pudo cargar sin conexión.', {
               status: 503,
               headers: { 'content-type': 'text/plain; charset=UTF-8' }
